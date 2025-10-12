@@ -1,0 +1,55 @@
+/* terms.css */
+
+/* Background gradient animation */
+body {
+  background: linear-gradient(-45deg, #16a34a, #4ade80, #86efac, #16a34a);
+  background-size: 400% 400%;
+  animation: gradientFlow 15s ease infinite;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b; /* slate-800 */
+}
+
+/* Animate gradient flow */
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Headings use display font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Terms content styling */
+.terms-content h3 {
+  font-size: 1.5rem;   /* 24px */
+  font-weight: 700;
+  color: #047857;      /* emerald-800 */
+  margin-top: 2rem;    /* 32px */
+  margin-bottom: 1rem; /* 16px */
+  border-bottom: 2px solid #bbf7d0; /* emerald-200 */
+  padding-bottom: 0.5rem;
+}
+
+.terms-content p,
+.terms-content li {
+  line-height: 1.75;
+  color: #334155; /* slate-700 */
+  margin-bottom: 1rem;
+}
+
+.terms-content ul {
+  list-style-type: disc;
+  padding-left: 2rem;
+}
+
+.terms-content a {
+  color: #16a34a; /* emerald-600 */
+  text-decoration: underline;
+  transition: color 0.3s;
+}
+
+.terms-content a:hover {
+  color: #047857; /* emerald-800 */
+}

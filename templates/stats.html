@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CleanSnap | My Statistics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+    }
+
+    header {
+      background: #198754;
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    header nav a {
+      color: white;
+      margin-left: 20px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #064635;
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      flex: 1 1 250px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      color: #198754;
+      margin-bottom: 10px;
+    }
+
+    .progress-section, .chart-section, .timeline, .leaderboard-section {
+      margin-top: 50px;
+    }
+
+    .progress-label {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      background: #ddd;
+      border-radius: 25px;
+      overflow: hidden;
+      height: 25px;
+    }
+
+    .progress-fill {
+      width: 75%;
+      height: 100%;
+      background: linear-gradient(to right, #28a745, #198754);
+      color: white;
+      text-align: center;
+      line-height: 25px;
+      animation: fill 1.5s ease-out;
+    }
+
+    @keyframes fill {
+      0% { width: 0; }
+      100% { width: 75%; }
+    }
+
+    .timeline {
+      border-left: 4px solid #198754;
+      padding-left: 20px;
+    }
+
+    .timeline-entry {
+      margin-bottom: 20px;
+    }
+
+    .timeline-entry h4 {
+      margin: 0;
+      font-size: 18px;
+      color: #064635;
+    }
+
+    .timeline-entry span {
+      font-size: 14px;
+      color: #888;
+    }
+
+    .leaderboard {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .leaderboard thead {
+      background-color: #198754;
+      color: white;
+    }
+
+    .leaderboard th, .leaderboard td {
+      padding: 12px;
+      text-align: center;
+    }
+
+    .leaderboard tbody tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+
+    .you {
+      color: #198754;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CleanSnap</h1>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="#">Logout</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>📊 Hello Aditya, here are your statistics</h2>
+
+    <div class="stats">
+      <div class="card">
+        <h3>Total Cleanups</h3>
+        <p>45</p>
+      </div>
+      <div class="card">
+        <h3>Rewards Earned</h3>
+        <p>8 Badges</p>
+      </div>
+      <div class="card">
+        <h3>Current Rank</h3>
+        <p>#2 in City</p>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label">Your Yearly Goal Progress: 75%</div>
+      <div class="progress-bar">
+        <div class="progress-fill">75%</div>
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <canvas id="cleanChart" height="100"></canvas>
+    </div>
+
+    <div class="timeline">
+      <h2>📅 Recent Activity</h2>
+      <div class="timeline-entry">
+        <h4>Uploaded Cleanup - Community Park</h4>
+        <span>July 29, 2025</span>
+      </div>
+      <div class="timeline-entry">
+        <h4>Earned Top Cleaner Badge</h4>
+        <span>July 24, 2025</span>
+      </div>
+      <div class="timeline-entry">
+        <h4>Cleanup Completed - River Front</h4>
+        <span>July 22, 2025</span>
+      </div>
+    </div>
+
+    <div class="leaderboard-section">
+      <h2>🏆 Top 5 City Cleaners</h2>
+      <table class="leaderboard">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🥇 1</td>
+            <td>Riya</td>
+            <td>154</td>
+          </tr>
+          <tr>
+            <td>🥈 2</td>
+            <td><strong class="you">Aditya (You)</strong></td>
+            <td class="you">147</td>
+          </tr>
+          <tr>
+            <td>🥉 3</td>
+            <td>Sahil</td>
+            <td>140</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Neha</td>
+            <td>135</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Rohit</td>
+            <td>130</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('cleanChart');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        datasets: [{
+          label: 'Cleanups Done',
+          data: [3, 5, 6, 4, 8, 7, 12],
+          backgroundColor: '#198754',
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

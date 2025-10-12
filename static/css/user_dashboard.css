@@ -1,0 +1,94 @@
+
+:root {
+  --primary-green: #16a34a; /* Emerald */
+  --light-green: #f0fdf4;
+  --dark-green-text: #065f46;
+  --text-color: #334155;
+  --background-color: #f8fafc; /* Very light grey */
+  --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  --card-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Main container for the dashboard */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header section with welcome message */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.dashboard-header h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--dark-green-text);
+  margin-bottom: 0.5rem;
+}
+.dashboard-header p {
+  font-size: 1.1rem;
+  color: var(--text-color);
+}
+
+/* Responsive grid for the option cards */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+/* Styling for each card */
+.dashboard-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Icon styling */
+.card-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--primary-green);
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* Button styling */
+.card-button {
+  background-color: var(--primary-green);
+  color: white;
+  font-weight: 600;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  border-radius: 9999px; /* Pill shape */
+  transition: background-color 0.2s;
+}
+
+.card-button:hover {
+  background-color: var(--dark-green-text);
+}

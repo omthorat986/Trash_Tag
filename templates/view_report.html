@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>View Cleanup Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+    .container { max-width: 900px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    h1 { margin-top: 0; color: #2e7d32; }
+    .field { margin-bottom: 16px; }
+    .label { font-weight: bold; margin-bottom: 4px; display: block; }
+    .value { padding: 8px; background: #f0f0f0; border-radius: 4px; }
+    .status { padding: 6px 12px; border-radius: 4px; font-weight: bold; display: inline-block; }
+    .status.Pending { background: #fdebd0; color: #d35400; }
+    .status.Clean { background: #e0f2f1; color: #2e7d32; }
+    .status['Dirty - Requires Re-clean'] { background: #f8d7da; color: #c0392b; }
+    .photo-container { margin-top: 20px; }
+    img { max-width: 100%; border-radius: 4px; margin-bottom: 10px; }
+    a { text-decoration: none; color: #1976d2; }
+    a:hover { text-decoration: underline; }
+    .back-btn { display: inline-block; margin-top: 20px; padding: 8px 12px; background: #1976d2; color: white; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cleanup Report #{{ report.id }}</h1>
+
+    <div class="field">
+      <span class="label">Location:</span>
+      <div class="value">{{ report.location }}</div>
+    </div>
+
+    <div class="field">
+      <span class="label">Reported By:</span>
+      <div class="value">{{ report.reported_by }}</div>
+    </div>
+
+    <div class="field">
+      <span class="label">Notes:</span>
+      <div class="value">{{ report.notes or '—' }}</div>
+    </div>
+
+    <div class="field">
+      <span class="label">Status:</span>
+      <span class="status {{ report.status }}">{{ report.status }}</span>
+    </div>
+
+    <div class="field">
+      <span class="label">Points Awarded:</span>
+      <div class="value">{{ report.points_awarded }}</div>
+    </div>
+
+    <div class="photo-container">
+      {% if report.photo %}
+        <div>
+          <span class="label">Original Photo:</span>
+          <img src="data:image/jpeg;base64,{{ report.photo | b64encode }}" alt="Original Photo">
+        </div>
+      {% endif %}
+
+      {% if report.submitted_photo %}
+        <div>
+          <span class="label">Submitted Cleaned Photo:</span>
+          <img src="data:image/jpeg;base64,{{ report.submitted_photo | b64encode }}" alt="Submitted Photo">
+        </div>
+      {% endif %}
+    </div>
+
+    <a href="{{ url_for('cleaner_dashboard') }}" class="back-btn">Back to Dashboard</a>
+  </div>
+</body>
+</html>

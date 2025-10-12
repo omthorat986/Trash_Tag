@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cleaner Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<style>
+/* --- Layout --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: #f5f6fa;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background: #2f3640;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+}
+
+.sidebar a {
+    display: block;
+    color: #dcdde1;
+    text-decoration: none;
+    padding: 8px 0;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.sidebar a:hover {
+    background: #40739e;
+    color: #fff;
+}
+
+.leaderboard {
+    margin-top: 30px;
+}
+
+.leaderboard h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.leaderboard ul {
+    list-style: none;
+    padding: 0;
+}
+
+.leaderboard li {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.95rem;
+}
+
+/* Logout button */
+.logout-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #e84118;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.logout-btn:hover {
+    background: #c23616;
+}
+
+/* Main content */
+.main {
+    flex: 1;
+    padding: 30px;
+    background: #f5f6fa;
+}
+
+.main h1 {
+    margin-bottom: 20px;
+}
+
+/* Flash messages */
+.flash {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.flash.success { background: #dff9fb; color: #22a6b3; }
+.flash.warning { background: #f9f1d3; color: #e1b12c; }
+.flash.danger  { background: #fab1a0; color: #c23616; }
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background: #40739e;
+    color: #fff;
+}
+
+thead th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+tbody tr:hover {
+    background: #f1f2f6;
+}
+
+/* Buttons */
+.btn-submit {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    background: #44bd32;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.btn-submit:hover {
+    background: #2f9e1f;
+}
+
+input[type="file"] {
+    margin-bottom: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px 20px;
+    }
+    .sidebar div {
+        flex: 1;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div>
+      <h2>Cleaner Panel</h2>
+      <a href="{{ url_for('cleaner_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('record_cleanup') }}">Record Cleanup</a>
+
+      <div class="leaderboard">
+        <h3>Top Cleaners</h3>
+        <ul>
+          {% for cleaner in top_cleaners[:5] %}
+            <li>{{ cleaner.username }} <span>{{ cleaner.points or 0 }} pts</span></li>
+          {% else %}
+            <li>No cleaners yet</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <form action="{{ url_for('logout') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="logout-btn">Logout</button>
+    </form>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <h1>Pending Cleanup Requests</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <table>
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Notes</th>
+          <th>Requested By</th>
+          <th>Submitted At</th>
+          <th>Requested Photo</th>
+          <th>Upload Cleaned Photo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in pending_requests %}
+          <tr>
+            <td>{{ req.location }}</td>
+            <td>{{ req.notes or '—' }}</td>
+            <td>{{ req.requested_by.username if req.requested_by else 'Unknown' }}</td>
+            <td>{{ req.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>
+              {% if req.photo_filename %}
+                <img src="{{ url_for('static', filename='uploads/' + req.photo_filename) }}"
+                     alt="Request Photo" style="width:80px; height:80px; object-fit:cover; border-radius:4px;">
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>
+              <form action="{{ url_for('submit_request_cleanup', request_id=req.id) }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="file" name="cleaned_image" required>
+                <button type="submit" class="btn-submit">Upload & AI Check</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align:center;">No pending cleanup requests</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Equipment Form</h2>
+    <form id="equipmentForm" style="margin-top:20px; padding:15px; background:#fff; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); width:300px;">
+      <label for="equipment">Equipment Used:</label><br><br>
+      <input type="text" id="equipment" name="equipment" placeholder="e.g. Mop, Gloves" style="width:100%; padding:8px;" required><br><br>
+
+      <label for="comments">Comments:</label><br><br>
+      <textarea id="comments" name="comments" placeholder="Any notes..." style="width:100%; padding:8px; height:80px;"></textarea><br><br>
+
+      <button type="submit" style="padding:10px 20px; background:#44bd32; color:white; border:none; border-radius:5px; cursor:pointer;">
+        Submit
+      </button>
+    </form>
+
+    <!-- Display Submitted Data -->
+    <div id="result" style="margin-top:20px; font-weight:bold; color:#2f3640;"></div>
+
+    <h1>Completed Cleanups</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Requested By</th>
+          <th>Completed At</th>
+          <th>Requested Photo</th>
+          <th>Cleaned Photo</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in completed_requests %}
+          <tr>
+            <td>{{ req.location }}</td>
+            <td>{{ req.requested_by.username if req.requested_by else 'Unknown' }}</td>
+            <td>{{ req.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>
+              {% if req.photo_filename %}
+                <img src="{{ url_for('static', filename='uploads/' + req.photo_filename) }}"
+                     alt="Requested Photo" style="width:80px; height:80px; object-fit:cover; border-radius:4px;">
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>
+              {% if req.submitted_photo_filename %}
+                <img src="{{ url_for('static', filename='uploads/' + req.submitted_photo_filename) }}"
+                     alt="Cleaned Photo" style="width:80px; height:80px; object-fit:cover; border-radius:4px;">
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td>
+              {% if req.rating %}
+                <span>{{ req.rating }}/5</span>
+              {% else %}
+                <form action="{{ url_for('rate_cleaner', report_id=req.id) }}" method="POST">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <select name="rating" required>
+                    <option value="">Rate</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                  <button type="submit" class="btn-submit">Submit</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" style="text-align:center;">No completed cleanups yet</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </main>
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const socket = io();
+
+    socket.on("connect", () => {
+        console.log("Socket connected:", socket.id);
+        socket.emit("join_cleaners");
+    });
+
+    socket.on("joined", data => {
+        console.log("Joined cleaners room:", data);
+    });
+
+    socket.on("new_cleanup_request", data => {
+        alert(`New cleanup request at ${data.location} from ${data.requested_by}`);
+        const tbody = document.querySelector("tbody");
+        if (!tbody) return;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${data.location}</td>
+            <td>${data.notes || '—'}</td>
+            <td>${data.requested_by}</td>
+            <td>${data.created_at}</td>
+            <td>
+              <form action="/report/${data.id}/submit" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="file" name="cleaned_image" required>
+                <button type="submit" class="btn-submit">Upload & AI Check</button>
+              </form>
+            </td>
+        `;
+        tbody.prepend(row);
+    });
+});
+</script>
+
+<script>
+document.getElementById("equipmentForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // prevent page reload
+    const equipment = document.getElementById("equipment").value;
+    const comments = document.getElementById("comments").value;
+
+    document.getElementById("result").innerHTML =
+        `<p>✅ Equipment Recorded:</p>
+         <p><strong>Equipment:</strong> ${equipment}</p>
+         <p><strong>Comments:</strong> ${comments || 'None'}</p>`;
+
+    // Reset the form
+    this.reset();
+});
+</script>
+</body>
+</html>

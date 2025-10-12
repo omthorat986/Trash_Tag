@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Statistics</title>
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+  }
+
+  h1, h2 {
+      margin: 0 0 15px 0;
+      color: #2c3e50;
+  }
+
+  h1 { font-size: 2rem; margin-bottom: 30px; text-align: center; }
+  h2 { font-size: 1.4rem; margin-top: 40px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px; }
+  .card { background: linear-gradient(135deg, #ffffff, #e3f2fd); padding: 25px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); flex: 1 1 200px; min-width: 220px; transition: transform 0.2s, box-shadow 0.2s; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+  .card h2 { font-size: 1.2rem; margin-bottom: 10px; color: #1565c0; }
+  .card p { font-size: 1.6rem; font-weight: bold; margin: 0; color: #0d47a1; }
+
+  .progress-bar { width: 100%; background: #e0e0e0; border-radius: 12px; overflow: hidden; height: 24px; margin-top: 10px; }
+  .progress { height: 100%; background: linear-gradient(90deg, #42a5f5, #1e88e5); text-align: center; color: white; font-weight: bold; line-height: 24px; transition: width 0.5s ease; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+  th, td { padding: 12px 15px; text-align: left; }
+  th { background: #1565c0; color: #fff; font-weight: 600; }
+  tbody tr:nth-child(even) { background: #f9f9f9; }
+  tbody tr:hover { background: #e3f2fd; cursor: pointer; }
+
+  canvas { max-width: 100%; height: 200px; margin-top: 15px; }
+
+  @media (max-width: 900px) { .stats { flex-direction: column; align-items: center; } }
+</style>
+</head>
+<body>
+
+<h1>My Statistics</h1>
+
+<div class="stats">
+  <div class="card">
+    <h2>Total Cleanups</h2>
+    <p>{{ total_cleanups }}</p>
+  </div>
+  <div class="card">
+    <h2>Points Earned</h2>
+    <p id="points">{{ rewards_earned }}</p>
+  </div>
+  <div class="card">
+    <h2>Rank</h2>
+    <p>{{ rank }}</p>
+  </div>
+  <div class="card">
+    <h2>Yearly Goal Progress</h2>
+    <div class="progress-bar">
+      <div class="progress" style="width: {{ goal_progress }}%;">{{ goal_progress }}%</div>
+    </div>
+  </div>
+</div>
+
+<h2>Monthly Cleanup Counts</h2>
+<canvas id="monthlyChart"></canvas>
+
+<h2>Recent Activities</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>Status</th>
+      <th>Submitted At</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for report in recent_activities %}
+      <tr>
+        <td>{{ report.location }}</td>
+        <td>{{ report.status }}</td>
+        <td>{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="3" style="text-align:center;">No recent activities</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Leaderboard (Top 5 Cleaners)</h2>
+<canvas id="leaderboardChart"></canvas>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const socket = io();
+    const CURRENT_USER_ID = {{ current_user.id }};
+
+    socket.on("connect", () => {
+        console.log("Connected to Socket.IO for stats updates");
+        socket.emit("join_cleaners");
+    });
+
+    socket.on("stats_updated", data => {
+        if (data.user_id === CURRENT_USER_ID) {
+            location.reload(); // Reload to update stats dynamically
+        }
+    });
+
+    // Monthly Cleanup Chart
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+    new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ monthly_counts.keys()|list|tojson }},
+            datasets: [{
+                label: 'Cleanups',
+                data: {{ monthly_counts.values()|list|tojson }},
+                backgroundColor: 'rgba(33, 150, 243, 0.7)',
+                borderColor: 'rgba(33, 150, 243, 1)',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+
+    // Leaderboard Chart
+    const leaderboardCtx = document.getElementById('leaderboardChart').getContext('2d');
+    new Chart(leaderboardCtx, {
+        type: 'horizontalBar',
+        data: {
+            labels: {{ leaderboard|map(attribute='username')|list|tojson }},
+            datasets: [{
+                label: 'Points',
+                data: {{ leaderboard|map(attribute='points')|list|tojson }},
+                backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                borderColor: 'rgba(76, 175, 80, 1)',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { beginAtZero: true }
+            }
+        }
+    });
+});
+</script>
+
+</body>
+</html>

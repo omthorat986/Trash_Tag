@@ -1,0 +1,118 @@
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+    background: #f4f4f4;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background: #fafafa;
+}
+
+tr:hover {
+    background: #f1f9ff;
+}
+
+/* File input and upload button */
+input[type="file"] {
+    margin-right: 8px;
+}
+
+.upload-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.upload-btn:hover {
+    background: #0056b3;
+}
+
+/* Status labels */
+.status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: white;
+    background: #6c757d; /* default gray */
+}
+
+/* Example custom colors by status (optional) */
+.status:contains("Pending") {
+    background: #ffc107; /* yellow */
+    color: #333;
+}
+
+.status:contains("Completed") {
+    background: #28a745; /* green */
+}
+
+.status:contains("Rejected") {
+    background: #dc3545; /* red */
+}
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-buttons a,
+.action-buttons button {
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+/* Button variants */
+.btn-view {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #117a8b;
+}
+
+.btn-submit {
+    background: #6f42c1;
+    color: white;
+}
+
+.btn-submit:hover {
+    background: #563d7c;
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #a71d2a;
+}

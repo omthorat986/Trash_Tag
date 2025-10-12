@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register - Trashtag Bag</title>
+  
+  <!-- Google Fonts for brand consistency -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            emerald: {
+              '50': '#f0fdf4', '100': '#dcfce7', '200': '#bbf7d0', '300': '#86efac', '400': '#4ade80',
+              '500': '#22c55e', '600': '#16a34a', '700': '#059669', '800': '#047857', '900': '#065f46',
+            },
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Custom styles for the animated background -->
+  <style>
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+      background: linear-gradient(-45deg, #059669, #16a34a, #4ade80, #86efac);
+      background-size: 400% 400%;
+      animation: gradientFlow 15s ease infinite;
+    }
+  </style>
+</head>
+<body class="animated-gradient font-sans antialiased">
+
+  <div class="flex flex-col items-center justify-center min-h-screen px-4 py-8">
+    <!-- Main Registration Card -->
+    <div class="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8">
+      
+      <!-- Form Header -->
+      <div class="text-center mb-8">
+        <svg class="mx-auto h-12 w-12 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
+        </svg>
+        <h2 class="mt-4 text-3xl font-bold font-display text-emerald-800">Become a Planet Hero</h2>
+        <p class="mt-2 text-sm text-gray-600">Create an account to start earning rewards.</p>
+      </div>
+
+      <!-- Flask Flash Messages Placeholder -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="mb-4">
+          {% for category, message in messages %}
+            <div class="p-4 rounded-md text-sm font-medium 
+              {% if category == 'danger' %} bg-red-100 text-red-800 
+              {% elif category == 'success' %} bg-emerald-100 text-emerald-800 
+              {% else %} bg-blue-100 text-blue-800 
+              {% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <!-- Registration Form -->
+      <form method="POST" action="{{ url_for('register') }}" class="space-y-5">
+        {{ form.csrf_token }}
+
+        <!-- Username Input -->
+        <div class="relative">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.095a1.23 1.23 0 00.41-1.412A9.99 9.99 0 0010 12c-2.31 0-4.438.784-6.131 2.095z" /></svg>
+          </div>
+          {{ form.name(class="block w-full rounded-md border-gray-300 py-3 pl-10 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500", placeholder="Username", autocomplete="username") }}
+        </div>
+
+        <!-- Email Input -->
+        <div class="relative">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 2.5l7.997 3.384A1 1 0 0019 4.884V16a1 1 0 01-1 1h-4.586a1 1 0 01-.707-.293l-1.414-1.414a1 1 0 00-1.414 0L8.293 16.707A1 1 0 017.586 17H3a1 1 0 01-1-1V4.884a1 1 0 00.003-1z" /></svg>
+          </div>
+          {{ form.email(class="block w-full rounded-md border-gray-300 py-3 pl-10 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500", placeholder="Email Address", autocomplete="email") }}
+        </div>
+
+        <!-- Password Input -->
+        <div class="relative">
+          <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" /></svg>
+          </div>
+          {{ form.password(class="block w-full rounded-md border-gray-300 py-3 pl-10 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500", placeholder="Password", autocomplete="new-password") }}
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          {{ form.submit(class="flex w-full justify-center rounded-md bg-emerald-600 px-3 py-3 font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-colors duration-200") }}
+        </div>
+      </form>
+
+      <!-- Login Link -->
+      <div class="mt-8 text-center">
+        <p class="text-sm text-gray-600">
+          Already have an account?
+          <a href="{{ url_for('login') }}" class="font-medium text-emerald-700 hover:text-emerald-800">
+            Login here
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+{% extends "base.html" %}
+{% block content %}
+<!-- Removed duplicate form block to avoid confusion -->
+{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+/* External CSS for gradient background animation */
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background: linear-gradient(-45deg, #059669, #16a34a, #4ade80, #86efac);
+  background-size: 400% 400%;
+  animation: gradientFlow 15s ease infinite;
+}

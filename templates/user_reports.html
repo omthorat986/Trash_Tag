@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}My Reports{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>My Cleanup Reports</h1>
+    
+    {% if reports %}
+        <div class="table-responsive mt-4">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Points</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                        <tr>
+                            <td>{{ report.id }}</td>
+                            <td>{{ report.location }}</td>
+                            <td>{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if report.status == 'Clean' else 'warning' if report.status == 'Pending' else 'danger' }}">
+                                    {{ report.status }}
+                                </span>
+                            </td>
+                            <td>{{ report.points_awarded }}</td>
+                            <td>
+                                <a href="{{ url_for('view_report', report_id=report.id) }}" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4">
+            <h4 class="alert-heading">No Reports Yet</h4>
+            <p>You haven't submitted any cleanup reports yet.</p>
+            <hr>
+            <p class="mb-0">
+                <a href="{{ url_for('request_cleanup') }}" class="btn btn-primary">Record a Cleanup</a>
+            </p>
+        </div>
+    {% endif %}
+    
+    <!-- Summary Stats -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reports</h5>
+                    <h2>{{ reports|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Completed</h5>
+                    <h2>{{ reports|selectattr('status', 'equalto', 'Clean')|list|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Points</h5>
+                    <h2>{{ reports|sum(attribute='points_awarded') }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

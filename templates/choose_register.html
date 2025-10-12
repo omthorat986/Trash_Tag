@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose Your Role - Trashtag Bag</title>
+  
+  <!-- Google Fonts for brand consistency -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            emerald: {
+              '50': '#f0fdf4', '100': '#dcfce7', '200': '#bbf7d0', '300': '#86efac', '400': '#4ade80',
+              '500': '#22c55e', '600': '#16a34a', '700': '#059669', '800': '#047857', '900': '#065f46',
+            },
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Custom styles for the animated background -->
+  <style>
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .animated-gradient {
+      background: linear-gradient(-45deg, #059669, #16a34a, #4ade80, #86efac);
+      background-size: 400% 400%;
+      animation: gradientFlow 15s ease infinite;
+    }
+  </style>
+</head>
+<body class="animated-gradient font-sans antialiased">
+
+  <div class="flex flex-col items-center justify-center min-h-screen px-4 py-8">
+    <!-- Main Selection Card -->
+    <div class="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8">
+      
+      <!-- Form Header -->
+      <div class="text-center mb-8">
+        <svg class="mx-auto h-12 w-12 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962a3.75 3.75 0 015.25 0m-5.25 0a3.75 3.75 0 00-5.25 0M3 13.239V18a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 18v-4.761M3 13.239A6.375 6.375 0 0112 12c2.405 0 4.61.803 6.375 2.239" />
+        </svg>
+        <h1 class="mt-4 text-3xl font-bold font-display text-emerald-800">Choose Your Role</h1>
+        <p class="mt-2 text-sm text-gray-600">How would you like to contribute?</p>
+      </div>
+
+      <!-- Registration Options -->
+      <div class="space-y-4">
+        
+        <!-- User Option -->
+        <a href="{{ url_for('register') }}" class="group flex items-center w-full p-4 bg-emerald-50 rounded-lg border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-200">
+          <div class="flex-shrink-0 bg-emerald-600 text-white rounded-full h-10 w-10 flex items-center justify-center">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" /></svg>
+          </div>
+          <div class="ml-4">
+            <p class="font-semibold text-emerald-800">Register as a User</p>
+            <p class="text-sm text-gray-600">Join the community, earn rewards.</p>
+          </div>
+        </a>
+
+        <!-- Cleaner Option -->
+        <a href="{{ url_for('register_cleaner') }}" class="group flex items-center w-full p-4 bg-emerald-50 rounded-lg border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-200">
+          <div class="flex-shrink-0 bg-emerald-600 text-white rounded-full h-10 w-10 flex items-center justify-center">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" /></svg>
+          </div>
+          <div class="ml-4">
+            <p class="font-semibold text-emerald-800">Register as a Cleaner</p>
+            <p class="text-sm text-gray-600">Help clean up and verify tasks.</p>
+          </div>
+        </a>
+        
+        <!-- Admin Option -->
+        <a href="{{ url_for('register_admin') }}" class="group flex items-center w-full p-4 bg-emerald-50 rounded-lg border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-200">
+          <div class="flex-shrink-0 bg-emerald-600 text-white rounded-full h-10 w-10 flex items-center justify-center">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm-1.5 6.144V6.162c0-1.58.823-3.024 2.08-3.874" /></svg>
+          </div>
+          <div class="ml-4">
+            <p class="font-semibold text-emerald-800">Register as an Admin</p>
+            <p class="text-sm text-gray-600">Manage the platform and users.</p>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- Login and Back Links -->
+      <div class="mt-8 text-center">
+        <p class="text-sm text-gray-600">
+          Already have an account?
+          <a href="{{ url_for('login') }}" class="font-medium text-emerald-700 hover:text-emerald-800">
+            Login here
+          </a>
+        </p>
+        <a href="{{ url_for('index') }}" class="mt-2 inline-block text-sm font-medium text-gray-500 hover:text-gray-700">
+          &larr; Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

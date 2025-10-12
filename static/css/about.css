@@ -1,0 +1,34 @@
+body {
+  animation: gradientBG 15s ease infinite;
+  background: linear-gradient(-45deg, #10B981, #34D399, #6EE7B7, #10B981);
+  background-size: 400% 400%;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-optimized {
+  will-change: transform, opacity;
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #10B981, #34D399, #6EE7B7, #10B981);
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

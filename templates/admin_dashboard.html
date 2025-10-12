@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-emerald-700 text-white flex flex-col">
+      <div class="px-6 py-8 text-2xl font-bold border-b border-emerald-600">
+        Admin Panel
+      </div>
+      <nav class="flex-1 px-4 py-6">
+        <ul class="space-y-3">
+          <li><a href="{{ url_for('admin_dashboard') }}" class="block py-2 px-3 rounded hover:bg-emerald-600">Dashboard</a></li>
+          <li><a href="#users" class="block py-2 px-3 rounded hover:bg-emerald-600">Users</a></li>
+          <li><a href="#" class="block py-2 px-3 rounded hover:bg-emerald-600">Rewards</a></li>
+          <li><a href="#" class="block py-2 px-3 rounded hover:bg-emerald-600">Reports</a></li>
+          <li><a href="#" class="block py-2 px-3 rounded hover:bg-emerald-600">Settings</a></li>
+        </ul>
+      </nav>
+      <div class="px-6 py-4 border-t border-emerald-600">
+        <!-- ✅ Functional Logout Button -->
+        <form action="{{ url_for('logout') }}" method="POST">
+          <button type="submit"
+            class="w-full bg-emerald-600 hover:bg-emerald-800 py-2 rounded-lg text-center transition">
+            Logout
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 md:p-8">
+      <!-- Header -->
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+        <p class="text-sm text-gray-500">Manage all users, their roles, and more.</p>
+      </header>
+
+      <!-- Users Table -->
+      <section id="users" class="bg-white rounded-xl shadow-md overflow-x-auto mb-12">
+        <div class="flex items-center justify-between px-6 py-4 border-b">
+          <h2 class="text-xl font-semibold">Registered Users</h2>
+          <a href="{{ url_for('register_admin') }}" 
+             class="bg-emerald-600 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm transition">
+            + Add User
+          </a>
+        </div>
+        <table class="min-w-full text-left text-sm">
+          <thead class="bg-gray-50 border-b text-gray-700">
+            <tr>
+              <th class="px-6 py-3 font-semibold">Username</th>
+              <th class="px-6 py-3 font-semibold">Email</th>
+              <th class="px-6 py-3 font-semibold">Role</th>
+              <th class="px-6 py-3 font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y">
+            {% for user in users %}
+              <tr class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4">{{ user.username }}</td>
+                <td class="px-6 py-4">{{ user.email }}</td>
+                <td class="px-6 py-4 capitalize">{{ user.role }}</td>
+                <td class="px-6 py-4 space-x-3">
+                  <a href="{{ url_for('edit_user', user_id=user.id) }}" 
+                     class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
+                  |
+                  <form action="{{ url_for('delete_user', user_id=user.id) }}" 
+                        method="POST" 
+                        class="inline"
+                        onsubmit="return confirm('Are you sure you want to delete {{ user.username }}?');">
+                    <button type="submit" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="4" class="text-center text-gray-500 py-6">No users found.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome - Cleaning Service</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin: 1rem 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        input[type="email"] {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 50px;
+            width: 250px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 50px;
+            background: #00c3ff;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        button:hover {
+            background: #02a4d3;
+            color: #fff;
+        }
+
+        .message {
+            font-weight: bold;
+        }
+
+        .links {
+            margin-top: 2rem;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: #00c3ff;
+            margin: 0 1rem;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #02a4d3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Cleaning Service App</h1>
+
+    <p>Check if your email is registered:</p>
+    <form method="POST">
+        <input type="email" name="email" placeholder="Enter your email" required>
+        <button type="submit">Check</button>
+    </form>
+
+    {% if email_found %}
+        <p class="message" style="color: #00ff88;">✅ This email is registered!</p>
+    {% elif email_found == False and request.method == 'POST' %}
+        <p class="message" style="color: #ff4f4f;">❌ This email is not registered.</p>
+    {% endif %}
+
+    <div class="links">
+        <a href="{{ url_for('choose_register') }}">Register</a>
+        <a href="{{ url_for('login') }}">Login</a>
+    </div>
+</body>
+</html>

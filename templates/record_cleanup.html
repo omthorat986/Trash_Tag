@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Request Cleanup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 { text-align: center; color: #333; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input[type="text"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    textarea { resize: vertical; min-height: 80px; }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #00c16e;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover { background: #009955; }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #555;
+      text-decoration: none;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .flash {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .flash.success { background: #d4edda; color: #155724; }
+    .flash.danger  { background: #f8d7da; color: #721c24; }
+    .flash.warning { background: #fff3cd; color: #856404; }
+    .flash.info    { background: #cce5ff; color: #004085; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Request Cleanup</h2>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+
+      <label for="location">Location</label>
+      {{ form.location(class_="", placeholder="Enter cleanup location", maxlength="200") }}
+
+      <label for="notes">Notes (Optional)</label>
+      {{ form.notes(class_="", placeholder="Additional details (max 500 chars)", maxlength="500") }}
+
+      <label for="photo">Upload Photo</label>
+      <input type="file" name="photo" id="photo" accept="image/*" required>
+
+      <button type="submit">Submit Request</button>
+    </form>
+
+    <a href="{{ url_for('user_dashboard') }}" class="back-link">⬅ Back to Dashboard</a>
+  </div>
+</body>
+</html>

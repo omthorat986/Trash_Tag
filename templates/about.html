@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About - Trashtag Bag</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          animation: {
+            'fade-up': 'fadeUp 0.8s ease-out forwards',
+            'bg-gradient': 'gradientBG 15s ease infinite',
+            'shimmer': 'shimmer 4s linear infinite',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- External CSS -->
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/.css') }}">
+
+</head>
+
+<body class="text-slate-800">
+  <div class="min-h-screen bg-white/60 backdrop-blur-md">
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 w-full z-30 bg-emerald-600/90 backdrop-blur-md shadow-xl">
+      <nav class="mx-auto my-4 flex max-w-max items-center gap-8 rounded-full px-8 py-3 text-white ring-1 ring-white/20">
+        <a href="{{ url_for('index') }}" class="hover:text-emerald-200 transition">Home</a>
+        <a href="#mission" class="hover:text-emerald-200 transition">Mission</a>
+        <a href="#workflow" class="hover:text-emerald-200 transition">Workflow</a>
+        <a href="#roles" class="hover:text-emerald-200 transition">User Roles</a>
+        <a href="#impact" class="hover:text-emerald-200 transition">Impact</a>
+        <a href="{{ url_for('choose_register') }}" class="hover:text-emerald-200 transition">Register</a>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-32">
+      <!-- Hero Section -->
+      <section class="text-center text-white px-6 py-24">
+        <h1 class="gradient-text text-6xl font-black drop-shadow-lg">About Trashtag Bag</h1>
+        <p class="mt-4 max-w-3xl mx-auto text-lg">An eco-gamified platform where students, cleaners, and educators unite to clean the planet — one snap at a time.</p>
+      </section>
+
+      <!-- Mission Section -->
+      <section id="mission" class="reveal max-w-5xl mx-auto px-6 py-16 opacity-0 animate-optimized">
+        <h2 class="text-4xl font-semibold text-emerald-700 mb-4">Our Mission</h2>
+        <p class="text-lg text-slate-700 leading-relaxed">
+          Trashtag Bag is more than just a cleaning initiative — it's a movement. We empower students to identify unclean areas in their community, cleaners to restore those spaces, and everyone to witness transformation and earn rewards. By blending social impact with gamification, we inspire consistent, meaningful action.
+        </p>
+      </section>
+
+      <!-- Workflow Section -->
+      <section id="workflow" class="reveal max-w-5xl mx-auto grid md:grid-cols-2 gap-10 px-6 py-16 opacity-0 items-center animate-optimized">
+        <div>
+          <h2 class="text-4xl font-semibold text-emerald-700 mb-4">How It Works</h2>
+          <ul class="space-y-4 text-lg text-slate-700">
+            <li>📸 <strong>Students</strong> snap photos of places needing cleanup and upload them.</li>
+            <li>🧹 <strong>Cleaners</strong> are assigned these tasks and clean the area.</li>
+            <li>✅ They then upload an <strong>after-cleaning photo</strong> as proof.</li>
+            <li>🏆 All users can view progress and support their community heroes.</li>
+            <li>🎯 Cleaners earn points and work toward <strong>monthly rewards</strong> and badges.</li>
+          </ul>
+        </div>
+        <div>
+          <img src="{{ url_for('static', filename='images/i4.png') }}" alt="Workflow diagram" class="rounded-3xl shadow-lg" loading="lazy" />
+        </div>
+      </section>
+
+      <!-- User Roles -->
+      <section id="roles" class="reveal max-w-5xl mx-auto grid md:grid-cols-2 gap-10 px-6 py-16 opacity-0 items-center animate-optimized">
+        <div>
+          <img src="{{ url_for('static', filename='images/i5.png') }}" alt="User roles illustration" class="rounded-3xl shadow-lg" loading="lazy" />
+        </div>
+        <div>
+          <h2 class="text-4xl font-semibold text-emerald-700 mb-4">User Roles</h2>
+          <ul class="space-y-4 text-lg text-slate-700">
+            <li>👩‍🎓 <strong>Students:</strong> Spot unclean areas, upload photos, and track progress.</li>
+            <li>🧼 <strong>Cleaners:</strong> Accept tasks, upload cleaned area photos, earn points.</li>
+            <li>👩‍🏫 <strong>Teachers:</strong> Monitor student engagement and encourage participation.</li>
+            <li>👨‍💼 <strong>Admins:</strong> Oversee all operations, assign cleaners, manage rewards.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Impact Section -->
+      <section id="impact" class="reveal max-w-5xl mx-auto px-6 py-16 opacity-0 animate-optimized">
+        <h2 class="text-4xl font-semibold text-emerald-700 mb-4">Social & Environmental Impact</h2>
+        <p class="text-lg text-slate-700 leading-relaxed">
+          With each uploaded photo, each cleaned space, and each point earned — we're reducing waste, improving public spaces, and creating a community of changemakers.
+          <br><br>
+          Join us in turning responsibility into rewards and effort into eco-pride. Every action counts.
+        </p>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-16 bg-emerald-700/90 py-6 text-center text-white">
+      <p>&copy; 2025 Trashtag Bag | Clean Together. Reward Forever.</p>
+    </footer>
+  </div>
+
+  <!-- Scroll animation logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const observerOptions = { threshold: 0.1 };
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add("opacity-100", "animate-fade-up");
+            }, index * 120);
+            obs.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+      document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+</html>

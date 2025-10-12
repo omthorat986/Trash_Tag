@@ -1,0 +1,14 @@
+Flask
+Flask-SocketIO
+eventlet
+Flask-Login
+Flask-WTF
+Flask-Migrate
+Flask-Limiter
+Flask-SQLAlchemy
+Werkzeug
+Pillow
+gunicorn
+wtforms
+openai
+google-genai

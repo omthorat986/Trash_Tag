@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ title or "Cleanup App" }}</title>
+</head>
+<body>
+  <nav>
+<a href="{{ url_for('index') }}">Home</a> |
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+      <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+        <button type="submit">Logout</button>
+      </form>
+    {% else %}
+      <a href="{{ url_for('login') }}">Login</a>
+    {% endif %}
+  </nav>
+  <hr>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <p><b>{{ cat }}</b>: {{ msg }}</p>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</body>
+</html>

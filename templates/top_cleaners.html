@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Top Cleaners{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Top Cleaners</h1>
+    
+    <div class="row mt-4">
+        {% for cleaner in cleaners[:3] %}
+            <div class="col-md-4">
+                <div class="card text-center {{ 'border-warning' if loop.index == 1 else '' }}">
+                    <div class="card-body">
+                        <div class="display-1 mb-3">
+                            {% if loop.index == 1 %}🏆{% elif loop.index == 2 %}🥈{% else %}🥉{% endif %}
+                        </div>
+                        <h3 class="card-title">{{ cleaner.username }}</h3>
+                        <p class="card-text">
+                            <span class="badge bg-primary">{{ cleaner.points }} points</span>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                {{ cleaner.cleanups_submitted|length }} cleanups completed
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Full Leaderboard -->
+    <div class="card mt-5">
+        <div class="card-header">
+            <h3>Full Leaderboard</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Cleaner</th>
+                            <th>Points</th>
+                            <th>Cleanups</th>
+                            <th>Latest Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cleaner in cleaners %}
+                            <tr class="{{ 'table-warning' if loop.index == 1 else '' }}">
+                                <td>{{ loop.index }}</td>
+                                <td>
+                                    {{ cleaner.username }}
+                                    {% if loop.index <= 3 %}
+                                        {{ ['🏆', '🥈', '🥉'][loop.index0] }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ cleaner.points }}</td>
+                                <td>{{ cleaner.cleanups_submitted|length }}</td>
+                                <td>
+                                    {% set latest = cleaner.cleanups_submitted|sort(attribute='created_at')|last %}
+                                    {% if latest %}
+                                        {{ latest.created_at.strftime('%Y-%m-%d') }}
+                                    {% else %}
+                                        No activity
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Awards -->
+    <div class="card mt-5 mb-5">
+        <div class="card-header">
+            <h3>Monthly Awards</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Most Cleanups</h5>
+                            <p class="display-4">🎯</p>
+                            <h4>{{ monthly_top_cleaner.username if monthly_top_cleaner else 'N/A' }}</h4>
+                            <p>{{ monthly_top_cleaner.monthly_cleanups if monthly_top_cleaner else 0 }} cleanups</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Most Improved</h5>
+                            <p class="display-4">📈</p>
+                            <h4>{{ most_improved.username if most_improved else 'N/A' }}</h4>
+                            <p>+{{ most_improved.improvement if most_improved else 0 }} points</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Perfect Score</h5>
+                            <p class="display-4">⭐</p>
+                            <h4>{{ perfect_score.username if perfect_score else 'N/A' }}</h4>
+                            <p>All cleanups verified</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any JavaScript for the leaderboard here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-refresh the page every 5 minutes
+        setTimeout(function() {
+            location.reload();
+        }, 300000);
+    });
+</script>
+{% endblock %}

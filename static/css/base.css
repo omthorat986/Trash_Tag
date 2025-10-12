@@ -1,0 +1,29 @@
+/* Global overrides or custom styling */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #047857; /* emerald-700 */
+  color: white;
+  padding: 1rem;
+}
+
+.app-title {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: bold;
+}
+
+/* Main Content */
+.main-content {
+  padding: 1.5rem;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  font-size: 0.875rem; /* text-sm */
+  color: #6b7280;      /* gray-500 */
+  margin-top: 2.5rem;
+}

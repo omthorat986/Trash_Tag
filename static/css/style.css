@@ -1,0 +1,151 @@
+/* =============================================
+   🎨 THEME & CONFIGURATION
+   Centralized variables for easy theming
+   ============================================= */
+:root {
+  /* -- Color Palette -- */
+  --color-primary-lightest: #bbf7d0;
+  --color-primary-lighter: #86efac;
+  --color-primary-light: #4ade80;
+  --color-primary: #22C55E;      /* Main button color */
+  --color-primary-dark: #16A34A;
+  --color-white: #ffffff;
+
+  /* -- Animation Timings -- */
+  --anim-duration-slow: 15s;
+  --anim-duration-medium: 8s;
+  --anim-transition-fast: 0.3s;
+
+  /* -- Layout Values -- */
+  --navbar-height: 9rem; /* For hero-section height calculation */
+}
+
+/* =============================================
+   🌿 ANIMATED BACKGROUNDS & EFFECTS
+   ============================================= */
+
+/* Flowing Gradient Background */
+body.bg-emerald-gradient {
+  background: linear-gradient(
+    -45deg,
+    var(--color-primary-dark),
+    var(--color-primary-light),
+    var(--color-primary-lighter),
+    var(--color-primary-dark)
+  );
+  background-size: 400% 400%;
+  animation: gradientFlow var(--anim-duration-slow) ease infinite;
+  will-change: background-position; /* Performance optimization */
+}
+
+/* Shimmering Gradient Text */
+.gradient-text {
+  background: linear-gradient(
+    45deg,
+    var(--color-primary-light),
+    var(--color-primary-lighter),
+    var(--color-primary-lightest),
+    var(--color-primary-light)
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* Fallback for non-supporting browsers */
+  animation: textShimmer var(--anim-duration-medium) linear infinite;
+  will-change: background-position; /* Improves smoothness */
+}
+
+/* =============================================
+   🧩 UI COMPONENTS
+   ============================================= */
+
+/* Primary Action Button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 2rem;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(34, 197, 94, 0.3);
+  text-decoration: none;
+  transition: transform var(--anim-transition-fast) ease,
+              background-color var(--anim-transition-fast) ease,
+              box-shadow var(--anim-transition-fast) ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(22, 163, 74, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
+}
+
+.btn-primary:focus-visible {
+  outline: 3px solid var(--color-primary-lighter);
+  outline-offset: 2px;
+}
+
+/* Optional: subtle pulse animation on hover */
+.btn-primary:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+  opacity: 0;
+  animation: btnHoverPulse 0.6s forwards;
+}
+
+@keyframes btnHoverPulse {
+  0% { opacity: 0.3; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.1); }
+}
+
+/* =============================================
+   📐 LAYOUT SECTIONS
+   ============================================= */
+
+.hero-section {
+  min-height: calc(100vh - var(--navbar-height));
+  padding: 6rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.5rem; /* Consistent spacing between child elements */
+}
+
+/* Responsive improvements */
+@media (min-width: 768px) {
+  .hero-section {
+    padding: 8rem 2rem;
+    gap: 2rem;
+  }
+}
+
+/* =============================================
+   🎬 ANIMATION KEYFRAMES
+   ============================================= */
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes textShimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
