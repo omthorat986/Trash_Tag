@@ -1,117 +1,140 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Registration - Trashtag Bag</title>
-  
-  <!-- Google Fonts for brand consistency -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-  
-  <!-- Tailwind CSS -->
+  <title>Add New User | Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Tailwind Configuration -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            display: ['Montserrat', 'sans-serif'],
-          },
-          colors: {
-            emerald: {
-              '50': '#f0fdf4', '100': '#dcfce7', '200': '#bbf7d0', '300': '#86efac', '400': '#4ade80',
-              '500': '#22c55e', '600': '#16a34a', '700': '#059669', '800': '#047857', '900': '#065f46',
-            },
-          }
-        }
-      }
-    };
-  </script>
-
-  <style>
-    @keyframes gradientFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    .animated-gradient {
-      background: linear-gradient(-45deg, #059669, #16a34a, #4ade80, #86efac);
-      background-size: 400% 400%;
-      animation: gradientFlow 15s ease infinite;
-    }
-  </style>
 </head>
-<body class="animated-gradient font-sans antialiased">
+<body class="bg-gradient-to-br from-emerald-50 to-green-50 min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-lg">
+    <!-- Back Button -->
+    <a href="{{ url_for('admin_dashboard') }}" class="inline-flex items-center text-emerald-700 hover:text-emerald-900 mb-6 font-semibold">
+      ← Back to Dashboard
+    </a>
 
-  <div class="flex flex-col items-center justify-center min-h-screen px-4 py-8">
-    <div class="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8">
-      
-      <!-- Header -->
+    <!-- Card -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
       <div class="text-center mb-8">
-        <svg class="mx-auto h-12 w-12 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm-1.5 6.144V6.162c0-1.58.823-3.024 2.08-3.874" />
-        </svg>
-        <h2 class="mt-4 text-3xl font-bold font-display text-emerald-800">Create Admin Account</h2>
-        <p class="mt-2 text-sm text-gray-600">Manage the platform and its users.</p>
+        <div class="inline-block bg-emerald-100 p-4 rounded-full mb-4">
+          <svg class="w-8 h-8 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900">👤 Add New User</h1>
+        <p class="text-gray-600 mt-2">Create a new user account and assign a role</p>
       </div>
 
       <!-- Flash Messages -->
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-          <div class="mb-4">
-            {% for category, message in messages %}
-              <div class="p-4 rounded-md text-sm font-medium 
-                {% if category == 'danger' %} bg-red-100 text-red-800 
-                {% elif category == 'success' %} bg-emerald-100 text-emerald-800 
-                {% else %} bg-blue-100 text-blue-800 {% endif %}">
-                {{ message }}
-              </div>
-            {% endfor %}
-          </div>
+          {% for cat, msg in messages %}
+            <div class="p-4 mb-4 rounded-lg text-sm font-semibold
+              {% if cat == 'success' %}bg-green-100 text-green-800 border border-green-300
+              {% elif cat == 'danger' %}bg-red-100 text-red-800 border border-red-300
+              {% elif cat == 'warning' %}bg-yellow-100 text-yellow-800 border border-yellow-300
+              {% else %}bg-blue-100 text-blue-800 border border-blue-300{% endif %}">
+              {{ msg }}
+            </div>
+          {% endfor %}
         {% endif %}
       {% endwith %}
 
-      <!-- Registration Form -->
-      <form method="POST" action="{{ url_for('register_admin') }}" class="space-y-5">
-        {{ form.hidden_tag() }}
+      <!-- Form -->
+      <form action="{{ url_for('register_admin') }}" method="POST" class="space-y-5">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-        <!-- Name -->
+        <!-- Username -->
         <div>
-          {{ form.name(class_="block w-full rounded-md border-gray-300 py-3 pl-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500", placeholder="Full Name") }}
-          {% for error in form.name.errors %}
-            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-          {% endfor %}
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+          <input
+            type="text"
+            name="username"
+            required
+            minlength="3"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+            placeholder="Enter username"
+          />
+          <p class="text-xs text-gray-500 mt-1">Minimum 3 characters</p>
         </div>
 
         <!-- Email -->
         <div>
-          {{ form.email(class_="block w-full rounded-md border-gray-300 py-3 pl-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500", placeholder="Email Address") }}
-          {% for error in form.email.errors %}
-            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-          {% endfor %}
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+          <input
+            type="email"
+            name="email"
+            required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+            placeholder="Enter email address"
+          />
+          <p class="text-xs text-gray-500 mt-1">Must be a valid email</p>
         </div>
 
         <!-- Password -->
         <div>
-          {{ form.password(class_="block w-full rounded-md border-gray-300 py-3 pl-3 text-gray-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500", placeholder="Password") }}
-          {% for error in form.password.errors %}
-            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-          {% endfor %}
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+          <input
+            type="password"
+            name="password"
+            required
+            minlength="6"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+            placeholder="Enter password"
+          />
+          <p class="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
         </div>
 
-        <!-- Submit -->
+        <!-- Role Selection -->
         <div>
-          {{ form.submit(class_="flex w-full justify-center rounded-md bg-emerald-600 px-3 py-3 font-semibold text-white shadow-sm hover:bg-emerald-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-colors duration-200") }}
+          <label class="block text-sm font-semibold text-gray-700 mb-2">User Role</label>
+          <select
+            name="role"
+            required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition bg-white"
+          >
+            <option value="">-- Select a role --</option>
+            <option value="user">👥 Regular User</option>
+            <option value="cleaner">🧹 Cleaner</option>
+            <option value="admin">👨‍💼 Administrator</option>
+          </select>
+          <p class="text-xs text-gray-500 mt-1">Choose the user's role and permissions</p>
         </div>
+
+        <!-- Role Descriptions -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p class="text-xs font-semibold text-blue-900 mb-2">📌 Role Guide:</p>
+          <ul class="text-xs text-blue-800 space-y-1">
+            <li>👥 <strong>User:</strong> Request cleanups, rate cleaners, earn EcoCoins</li>
+            <li>🧹 <strong>Cleaner:</strong> Accept requests, submit photos, earn rewards</li>
+            <li>👨‍💼 <strong>Admin:</strong> Manage users, approve reports, issue penalties</li>
+          </ul>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg transition transform hover:scale-105 active:scale-95"
+        >
+          ✅ Create User Account
+        </button>
       </form>
 
-      <!-- Back -->
-      <div class="mt-8 text-center">
-        <a href="{{ url_for('choose_register') }}" class="text-sm font-medium text-emerald-700 hover:text-emerald-800">
-          &larr; Back to options
+      <!-- Info Box -->
+      <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <p class="text-xs text-gray-600">
+          <strong>Note:</strong> This action can only be performed by administrators. All newly created accounts must comply with platform policies.
+        </p>
+      </div>
+    </div>
+
+    <!-- Security Note -->
+    <div class="mt-6 text-center text-xs text-gray-600">
+      <p>🔒 This page is protected and accessible only to administrators.</p>
+    </div>
+  </div>
+</body>
+</html>
         </a>
       </div>
     </div>

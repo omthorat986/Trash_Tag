@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12">
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">📋 My Equipment Requests</h1>
+      <p class="text-gray-600">Track all your equipment requests and their approval status</p>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mb-6">
+      <a href="{{ url_for('cleaner_dashboard') }}" class="text-emerald-600 hover:text-emerald-700 font-semibold flex items-center gap-2">
+        ← Back to Dashboard
+      </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="bg-emerald-600 px-6 py-4 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-white">Your Equipment Requests</h2>
+        <a href="{{ url_for('equipment_request') }}" class="bg-white text-emerald-600 hover:bg-gray-100 px-4 py-2 rounded-lg font-semibold transition">
+          + New Request
+        </a>
+      </div>
+
+      {% if requests %}
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="bg-gray-50 border-b">
+              <tr>
+                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900">Equipment</th>
+                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900">Quantity</th>
+                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900">Reason</th>
+                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900">Status</th>
+                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900">Submitted</th>
+                <th class="px-6 py-4 text-left text-sm font-bold text-gray-900">Reviewed</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              {% for req in requests %}
+              <tr class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4 font-semibold text-gray-900">{{ req.equipment_name }}</td>
+                <td class="px-6 py-4 text-gray-700">
+                  <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">
+                    {{ req.quantity }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-gray-600">
+                  {% if req.reason %}
+                    <p class="text-sm max-w-xs">{{ req.reason }}</p>
+                  {% else %}
+                    <span class="text-gray-400">—</span>
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4">
+                  {% if req.status == 'Pending' %}
+                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">
+                      ⏳ {{ req.status }}
+                    </span>
+                  {% elif req.status == 'Approved' %}
+                    <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
+                      ✅ {{ req.status }}
+                    </span>
+                  {% elif req.status == 'Rejected' %}
+                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">
+                      ❌ {{ req.status }}
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4 text-gray-600 text-sm">
+                  {{ req.created_at.strftime('%Y-%m-%d %H:%M') }}
+                </td>
+                <td class="px-6 py-4 text-gray-600 text-sm">
+                  {% if req.reviewed_at %}
+                    <div>
+                      <p>{{ req.reviewed_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                      {% if req.reviewed_by %}
+                        <p class="text-xs text-gray-500">by {{ req.reviewed_by.username }}</p>
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    <span class="text-gray-400">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="bg-gray-50 px-6 py-4 border-t">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="text-center">
+              <p class="text-3xl font-bold text-yellow-600">
+                {{ requests | selectattr('status', 'equalto', 'Pending') | list | length }}
+              </p>
+              <p class="text-sm text-gray-600">Pending</p>
+            </div>
+            <div class="text-center">
+              <p class="text-3xl font-bold text-emerald-600">
+                {{ requests | selectattr('status', 'equalto', 'Approved') | list | length }}
+              </p>
+              <p class="text-sm text-gray-600">Approved</p>
+            </div>
+            <div class="text-center">
+              <p class="text-3xl font-bold text-red-600">
+                {{ requests | selectattr('status', 'equalto', 'Rejected') | list | length }}
+              </p>
+              <p class="text-sm text-gray-600">Rejected</p>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-16">
+          <p class="text-6xl mb-4">📭</p>
+          <p class="text-xl font-semibold text-gray-900 mb-2">No Equipment Requests Yet</p>
+          <p class="text-gray-600 mb-6">You haven't submitted any equipment requests yet.</p>
+          <a 
+            href="{{ url_for('equipment_request') }}"
+            class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition shadow-md hover:shadow-lg"
+          >
+            + Submit Your First Request
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Info Box -->
+    <div class="mt-8 bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+      <h3 class="font-bold text-blue-900 mb-2">ℹ️ How Equipment Requests Work</h3>
+      <ul class="text-sm text-blue-900 space-y-2">
+        <li>• Submit a request through the Equipment Request form</li>
+        <li>• Admin will review your request and approve or reject it</li>
+        <li>• Track the status of all your requests here</li>
+        <li>• Once approved, you can collect your equipment from the admin</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -2,100 +2,357 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>My Statistics</title>
+<title>My Statistics - CleanSnap</title>
 <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
+  :root {
+    --green: #059669;
+    --light-green: #d1fae5;
+    --bg: #f4f6f9;
+    --white: #fff;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f2f5;
-      margin: 0;
-      padding: 20px;
-      color: #333;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background: linear-gradient(145deg, #e8f5ec, #f7fafc);
+    color: #333;
+    overflow-x: hidden;
+    padding: 0;
   }
 
-  h1, h2 {
-      margin: 0 0 15px 0;
-      color: #2c3e50;
+  header {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    padding: 25px 40px;
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+    animation: slideDown 1s ease-out;
   }
 
-  h1 { font-size: 2rem; margin-bottom: 30px; text-align: center; }
-  h2 { font-size: 1.4rem; margin-top: 40px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0;
+  }
 
-  .stats { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px; }
-  .card { background: linear-gradient(135deg, #ffffff, #e3f2fd); padding: 25px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); flex: 1 1 200px; min-width: 220px; transition: transform 0.2s, box-shadow 0.2s; }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-  .card h2 { font-size: 1.2rem; margin-bottom: 10px; color: #1565c0; }
-  .card p { font-size: 1.6rem; font-weight: bold; margin: 0; color: #0d47a1; }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 25px;
+    animation: fadeIn 1.2s ease-out;
+  }
 
-  .progress-bar { width: 100%; background: #e0e0e0; border-radius: 12px; overflow: hidden; height: 24px; margin-top: 10px; }
-  .progress { height: 100%; background: linear-gradient(90deg, #42a5f5, #1e88e5); text-align: center; color: white; font-weight: bold; line-height: 24px; transition: width 0.5s ease; }
+  h1 {
+    text-align: center;
+    color: #064635;
+    font-size: 2.2rem;
+    margin-bottom: 50px;
+    font-weight: 700;
+    animation: fadeUp 0.8s ease-in-out;
+  }
 
-  table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-  th, td { padding: 12px 15px; text-align: left; }
-  th { background: #1565c0; color: #fff; font-weight: 600; }
-  tbody tr:nth-child(even) { background: #f9f9f9; }
-  tbody tr:hover { background: #e3f2fd; cursor: pointer; }
+  h2 {
+    color: #064635;
+    font-size: 1.8rem;
+    margin-top: 60px;
+    margin-bottom: 30px;
+    font-weight: 600;
+    border-bottom: 3px solid var(--green);
+    padding-bottom: 15px;
+    animation: fadeUp 1s ease-in-out;
+  }
 
-  canvas { max-width: 100%; height: 200px; margin-top: 15px; }
+  .stats {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
 
-  @media (max-width: 900px) { .stats { flex-direction: column; align-items: center; } }
+  .card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    padding: 30px 25px;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    flex: 1 1 250px;
+    text-align: center;
+    border: 1px solid rgba(5, 150, 105, 0.1);
+    transition: all 0.3s ease;
+    animation: popUp 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.2s; }
+  .card:nth-child(2) { animation-delay: 0.4s; }
+  .card:nth-child(3) { animation-delay: 0.6s; }
+  .card:nth-child(4) { animation-delay: 0.8s; }
+
+  .card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 15px 35px rgba(5, 150, 105, 0.25);
+  }
+
+  .card h3 {
+    color: var(--green);
+    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .card p {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #064635;
+    margin: 0;
+  }
+
+  .progress-section {
+    margin-top: 50px;
+    animation: fadeUp 1s ease-in-out;
+  }
+
+  .progress-label {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: 500;
+    color: #475569;
+  }
+
+  .progress-bar {
+    background: #e2e8f0;
+    border-radius: 25px;
+    overflow: hidden;
+    height: 30px;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #059669);
+    color: white;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    animation: fillBar 2.5s ease-out forwards;
+    box-shadow: 0 0 10px rgba(5, 150, 105, 0.4);
+  }
+
+  @keyframes fillBar {
+    from { width: 0%; }
+    to { width: var(--progress-width); }
+  }
+
+  .chart-section {
+    margin-top: 60px;
+    animation: fadeUp 1.1s ease-in-out;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  canvas {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .timeline {
+    margin-top: 70px;
+    animation: fadeUp 1.2s ease-in-out;
+  }
+
+  .timeline-entry {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    padding: 20px 25px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    border-left: 5px solid var(--green);
+    box-shadow: var(--shadow);
+    animation: slideIn 0.6s ease forwards;
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  .timeline-entry:nth-child(1) { animation-delay: 0.2s; }
+  .timeline-entry:nth-child(2) { animation-delay: 0.4s; }
+  .timeline-entry:nth-child(3) { animation-delay: 0.6s; }
+  .timeline-entry:nth-child(4) { animation-delay: 0.8s; }
+
+  .timeline-entry h4 {
+    color: #064635;
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+  }
+
+  .timeline-entry span {
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-top: 20px;
+    animation: riseUp 1s ease forwards;
+    opacity: 0;
+  }
+
+  th, td {
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: 500;
+  }
+
+  th {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    font-weight: 600;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #f8f9fa;
+  }
+
+  tbody tr:hover {
+    background: #e8f5ec;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .leaderboard-section {
+    margin-top: 70px;
+    animation: fadeUp 1.3s ease-in-out;
+  }
+
+  /* --- Animations --- */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideIn {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes slideDown {
+    from { transform: translateY(-60px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  @keyframes popUp {
+    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(40px); }
+  }
+
+  @keyframes riseUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    .container { padding: 30px 15px; }
+    .stats { flex-direction: column; align-items: stretch; }
+    .card { width: 100%; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.4rem; }
+  }
 </style>
 </head>
 <body>
 
-<h1>My Statistics</h1>
+<header>
+  <h1>📊 My Statistics</h1>
+  <a href="{% if current_user.role == 'cleaner' %}{{ url_for('cleaner_dashboard') }}{% else %}{{ url_for('user_dashboard') }}{% endif %}" style="color: white; text-decoration: none; font-weight: 600; position: absolute; right: 25px; top: 18px;">← Back to Dashboard</a>
+</header>
 
+<div class="container">
+<h1>Your Eco Impact Dashboard</h1>
+
+<!-- Stats Cards -->
 <div class="stats">
   <div class="card">
-    <h2>Total Cleanups</h2>
+    <h3>🧹 Total Cleanups</h3>
     <p>{{ total_cleanups }}</p>
   </div>
   <div class="card">
-    <h2>Points Earned</h2>
-    <p id="points">{{ rewards_earned }}</p>
+    <h3>⭐ EcoCoins Earned</h3>
+    <p>{{ current_user.points or 0 }} ₑ₵</p>
   </div>
   <div class="card">
-    <h2>Rank</h2>
-    <p>{{ rank }}</p>
+    <h3>🏆 Your Rank</h3>
+    <p>#{{ rank or 'TBD' }}</p>
   </div>
   <div class="card">
-    <h2>Yearly Goal Progress</h2>
+    <h3>📈 Yearly Goal</h3>
     <div class="progress-bar">
-      <div class="progress" style="width: {{ goal_progress }}%;">{{ goal_progress }}%</div>
+      <div class="progress-fill" style="--progress-width: {{ goal_progress or 0 }}%;">{{ goal_progress or 0 }}%</div>
     </div>
   </div>
 </div>
 
-<h2>Monthly Cleanup Counts</h2>
-<canvas id="monthlyChart"></canvas>
+<!-- Progress Section -->
+<div class="progress-section">
+  <div class="progress-label">🎯 Your Yearly Impact Progress: <strong>{{ goal_progress or 0 }}%</strong></div>
+  <div class="progress-bar">
+    <div class="progress-fill" style="--progress-width: {{ goal_progress or 0 }}%;">{{ goal_progress or 0 }}%</div>
+  </div>
+</div>
 
-<h2>Recent Activities</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Location</th>
-      <th>Status</th>
-      <th>Submitted At</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for report in recent_activities %}
-      <tr>
-        <td>{{ report.location }}</td>
-        <td>{{ report.status }}</td>
-        <td>{{ report.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-      </tr>
-    {% else %}
-      <tr>
-        <td colspan="3" style="text-align:center;">No recent activities</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<!-- Chart Section -->
+<div class="chart-section">
+  <h2>📊 Monthly Cleanup Counts</h2>
+  <canvas id="monthlyChart"></canvas>
+</div>
 
-<h2>Leaderboard (Top 5 Cleaners)</h2>
-<canvas id="leaderboardChart"></canvas>
+<!-- Timeline / Recent Activities -->
+<div class="timeline">
+  <h2>📅 Recent Activities</h2>
+  {% for report in recent_activities[:5] %}
+    <div class="timeline-entry">
+      <h4>🧹 {{ report.location }}</h4>
+      <span>{{ report.created_at.strftime('%Y-%m-%d %H:%M') }} • {{ report.status }}</span>
+    </div>
+  {% else %}
+    <div class="timeline-entry">
+      <h4>No recent activities</h4>
+      <span>Start by recording your first cleanup!</span>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Leaderboard Section -->
+<div class="leaderboard-section">
+  <h2>🏆 Top 5 Cleaners</h2>
+  <canvas id="leaderboardChart"></canvas>
+</div>
+
+</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -103,61 +360,116 @@ document.addEventListener("DOMContentLoaded", () => {
     const CURRENT_USER_ID = {{ current_user.id }};
 
     socket.on("connect", () => {
-        console.log("Connected to Socket.IO for stats updates");
+        console.log("[INFO] Connected to Socket.IO for stats updates");
         socket.emit("join_cleaners");
     });
 
     socket.on("stats_updated", data => {
         if (data.user_id === CURRENT_USER_ID) {
-            location.reload(); // Reload to update stats dynamically
+            console.log("[INFO] Stats updated, reloading...");
+            location.reload();
         }
     });
 
-    // Monthly Cleanup Chart
+    // Monthly Cleanup Chart with Animations
     const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
     new Chart(monthlyCtx, {
         type: 'bar',
         data: {
             labels: {{ monthly_counts.keys()|list|tojson }},
             datasets: [{
-                label: 'Cleanups',
+                label: 'Cleanups Completed',
                 data: {{ monthly_counts.values()|list|tojson }},
-                backgroundColor: 'rgba(33, 150, 243, 0.7)',
-                borderColor: 'rgba(33, 150, 243, 1)',
-                borderWidth: 1,
-                borderRadius: 6
+                backgroundColor: 'rgba(5, 150, 105, 0.8)',
+                borderColor: 'rgba(5, 150, 105, 1)',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(5, 150, 105, 1)'
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(5, 150, 105, 0.9)',
+                    padding: 12,
+                    borderRadius: 8
+                }
+            },
             scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#064635',
+                        font: { weight: 500 }
+                    },
+                    grid: { color: '#e2e8f0' }
+                },
+                x: {
+                    ticks: { color: '#064635', font: { weight: 500 } },
+                    grid: { display: false }
+                }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
             }
         }
     });
 
-    // Leaderboard Chart
+    // Leaderboard Chart with Animations
     const leaderboardCtx = document.getElementById('leaderboardChart').getContext('2d');
     new Chart(leaderboardCtx, {
-        type: 'horizontalBar',
+        type: 'bar',
         data: {
             labels: {{ leaderboard|map(attribute='username')|list|tojson }},
             datasets: [{
-                label: 'Points',
+                label: 'EcoCoins',
                 data: {{ leaderboard|map(attribute='points')|list|tojson }},
-                backgroundColor: 'rgba(76, 175, 80, 0.7)',
-                borderColor: 'rgba(76, 175, 80, 1)',
-                borderWidth: 1,
-                borderRadius: 6
+                backgroundColor: [
+                    'rgba(5, 150, 105, 0.9)',
+                    'rgba(5, 150, 105, 0.8)',
+                    'rgba(5, 150, 105, 0.7)',
+                    'rgba(5, 150, 105, 0.6)',
+                    'rgba(5, 150, 105, 0.5)'
+                ],
+                borderColor: 'rgba(5, 150, 105, 1)',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(5, 150, 105, 1)'
             }]
         },
         options: {
             indexAxis: 'y',
             responsive: true,
-            plugins: { legend: { display: false } },
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(5, 150, 105, 0.9)',
+                    padding: 12,
+                    borderRadius: 8
+                }
+            },
             scales: {
-                x: { beginAtZero: true }
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#064635',
+                        font: { weight: 500 }
+                    },
+                    grid: { color: '#e2e8f0' }
+                },
+                y: {
+                    ticks: { color: '#064635', font: { weight: 500 } },
+                    grid: { display: false }
+                }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
             }
         }
     });
@@ -166,3 +478,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+

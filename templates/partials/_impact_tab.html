@@ -1,0 +1,51 @@
+<div class="card glass p-6">
+  <h2 class="section-title">🌍 Impact & Awareness</h2>
+  <p class="text-gray-600 mb-4">High-level environmental stats (static for now).</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="p-4 bg-green-50 rounded">
+      <h3 class="font-semibold">🇮🇳 Country</h3>
+      <p class="text-xl font-bold text-emerald-700">{{ impact_data.country }}</p>
+    </div>
+    <div class="p-4 bg-green-50 rounded">
+      <h3 class="font-semibold">Waste Generated</h3>
+      <p class="text-xl font-bold text-emerald-700">{{ impact_data.waste_generated }}</p>
+    </div>
+    <div class="p-4 bg-green-50 rounded">
+      <h3 class="font-semibold">Plastic Recycled</h3>
+      <p class="text-xl font-bold text-emerald-700">{{ impact_data.plastic_recycled }}</p>
+    </div>
+    <div class="p-4 bg-green-50 rounded">
+      <h3 class="font-semibold">AQI</h3>
+      <p class="text-xl font-bold text-emerald-700">{{ impact_data.aqi }}</p>
+    </div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+    <div>
+      <p class="text-3xl font-bold text-emerald-700">{{ impact_data.community_impact.cleanups }}</p>
+      <p class="text-sm text-gray-600">Cleanups</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-emerald-700">{{ impact_data.community_impact.active_cleaners }}</p>
+      <p class="text-sm text-gray-600">Active Cleaners</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-emerald-700">{{ impact_data.community_impact.eco_coins }}</p>
+      <p class="text-sm text-gray-600">EcoCoins Earned</p>
+    </div>
+    <div>
+      <p class="text-3xl font-bold text-emerald-700">{{ impact_data.community_impact.waste_removed }}</p>
+      <p class="text-sm text-gray-600">Waste Removed</p>
+    </div>
+  </div>
+
+  <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+    <h3 class="font-semibold text-blue-800">🌱 How You Can Help</h3>
+    <ul class="list-disc pl-6 mt-2 text-gray-700">
+      {% for tip in impact_data.tips %}
+        <li>{{ tip }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>

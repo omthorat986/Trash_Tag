@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Manage Green Store</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .back-link {
+      display: inline-block;
+      color: #059669;
+      text-decoration: none;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .add-item-section {
+      background: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    button[type="submit"] {
+      background: #00c16e;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button[type="submit"]:hover {
+      background: #009955;
+    }
+    .flash {
+      margin: 15px 0;
+      padding: 12px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .flash.success { background: #d4edda; color: #155724; }
+    .flash.danger { background: #f8d7da; color: #721c24; }
+    .flash.warning { background: #fff3cd; color: #856404; }
+    .flash.info { background: #cce5ff; color: #004085; }
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .item-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .item-image {
+      width: 100%;
+      height: 150px;
+      background: #e8f5e9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      border-bottom: 1px solid #ddd;
+    }
+    .item-content {
+      padding: 15px;
+    }
+    .item-name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #333;
+    }
+    .item-description {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+      min-height: 30px;
+    }
+    .item-cost {
+      font-weight: bold;
+      color: #00c16e;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .item-status {
+      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 3px;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+    .item-status.available {
+      background: #d4edda;
+      color: #155724;
+    }
+    .item-status.unavailable {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .item-actions form {
+      flex: 1;
+    }
+    .item-actions button {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+    .btn-toggle {
+      background: #ffc107;
+      color: white;
+    }
+    .btn-toggle:hover {
+      background: #e0a800;
+    }
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+    }
+    .btn-delete:hover {
+      background: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="{{ url_for('admin_dashboard') }}" class="back-link">← Back to Admin Dashboard</a>
+
+    <h1>🌿 Green Store Management</h1>
+    <p class="subtitle">Add and manage eco-friendly items available in the store</p>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Add New Item Form -->
+    <div class="add-item-section">
+      <h2>➕ Add New Store Item</h2>
+      <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Item Name *</label>
+            <input type="text" id="name" name="name" required placeholder="e.g., Reusable Water Bottle">
+          </div>
+
+          <div class="form-group">
+            <label for="cost">Cost (ₑ₵) *</label>
+            <input type="number" id="cost" name="cost" min="1" required placeholder="e.g., 100">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" placeholder="Describe this eco-friendly item..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="image">Item Image</label>
+          <input type="file" id="image" name="image" accept="image/*">
+          <small style="color: #999;">Optional: JPG, PNG (max 5MB)</small>
+        </div>
+
+        <button type="submit">✓ Add Item to Store</button>
+      </form>
+    </div>
+
+    <!-- Current Items -->
+    <h2 style="margin-bottom: 20px;">📦 Current Store Items ({{ items|length }})</h2>
+
+    {% if items %}
+      <div class="items-grid">
+        {% for item in items %}
+        <div class="item-card">
+          <div class="item-image">
+            {% if item.image_filename %}
+              <img src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" 
+                   style="width: 100%; height: 100%; object-fit: cover;" alt="{{ item.name }}">
+            {% else %}
+              🌱
+            {% endif %}
+          </div>
+
+          <div class="item-content">
+            <div class="item-name">{{ item.name }}</div>
+            
+            {% if item.description %}
+              <div class="item-description">{{ item.description }}</div>
+            {% else %}
+              <div class="item-description" style="color: #999;">No description</div>
+            {% endif %}
+
+            <div class="item-cost">{{ item.cost }} ₑ₵</div>
+
+            <div class="item-status {% if item.available %}available{% else %}unavailable{% endif %}">
+              {% if item.available %}✓ Available{% else %}✗ Unavailable{% endif %}
+            </div>
+
+            <div class="item-actions">
+              <form action="{{ url_for('toggle_item_availability', item_id=item.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-toggle">
+                  {% if item.available %}Hide{% else %}Show{% endif %}
+                </button>
+              </form>
+
+              <form action="{{ url_for('delete_store_item', item_id=item.id) }}" method="POST" 
+                    onsubmit="return confirm('Delete this item?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-delete">Delete</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="background: white; padding: 40px; border-radius: 8px; text-align: center;">
+        <p style="font-size: 48px; margin: 0;">📭</p>
+        <p style="color: #666; margin: 15px 0 0 0;">No items in store yet. Add your first item above!</p>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

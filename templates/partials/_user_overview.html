@@ -1,0 +1,29 @@
+<div class="card glass p-6">
+  <h2 class="section-title">🏠 Overview</h2>
+  <p class="text-gray-600 mb-4">Welcome back, <strong>{{ current_user.username }}</strong> — here are some quick actions.</p>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <a href="{{ url_for('request_cleanup') }}" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+      <div class="text-3xl">🧾</div>
+      <p class="font-semibold mt-2">Request Cleanup</p>
+      <p class="text-sm text-gray-500">Report a new area that needs cleaning</p>
+    </a>
+
+    <a href="{{ url_for('record_cleanup') }}" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+      <div class="text-3xl">📸</div>
+      <p class="font-semibold mt-2">Record Cleanup</p>
+      <p class="text-sm text-gray-500">Upload before/after photos to claim EcoCoins</p>
+    </a>
+
+    <a href="{{ url_for('my_statistics') }}" class="block bg-white rounded-lg p-4 shadow hover:shadow-lg transition">
+      <div class="text-3xl">📊</div>
+      <p class="font-semibold mt-2">My Statistics</p>
+      <p class="text-sm text-gray-500">View progress, EcoCoins & achievements</p>
+    </a>
+  </div>
+
+  <div class="mt-6 bg-emerald-50 p-4 rounded-lg">
+    <p class="font-semibold text-emerald-700">💰 Current Balance</p>
+    <p class="text-2xl font-bold">{{ current_user.points or 0 }} ₑ₵</p>
+  </div>
+</div>

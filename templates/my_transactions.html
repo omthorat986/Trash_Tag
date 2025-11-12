@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Transaction History</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">📊 Transaction History</h1>
+      <p class="text-gray-600">Track all your EcoCoin earnings and purchases</p>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mb-6">
+      <a href="{{ url_for('green_store') }}" class="text-emerald-600 hover:text-emerald-700 font-semibold">
+        ← Back to Green Store
+      </a>
+    </div>
+
+    <!-- Current Balance -->
+    <div class="bg-gradient-to-r from-emerald-600 to-green-600 text-white p-6 rounded-xl shadow-lg mb-8">
+      <p class="text-gray-100 text-sm mb-1">Current Balance</p>
+      <p class="text-4xl font-bold">{{ current_user.points }} ₑ₵</p>
+    </div>
+
+    <!-- Transactions Table -->
+    {% if transactions %}
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-100 border-b">
+              <tr>
+                <th class="px-6 py-4 text-left font-semibold text-gray-700">Date & Time</th>
+                <th class="px-6 py-4 text-left font-semibold text-gray-700">Type</th>
+                <th class="px-6 py-4 text-left font-semibold text-gray-700">Description</th>
+                <th class="px-6 py-4 text-right font-semibold text-gray-700">Amount</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              {% for tx in transactions %}
+              <tr class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4 text-gray-700">
+                  <div class="font-semibold">{{ tx.timestamp.strftime('%Y-%m-%d') }}</div>
+                  <div class="text-xs text-gray-500">{{ tx.timestamp.strftime('%H:%M:%S') }}</div>
+                </td>
+                <td class="px-6 py-4">
+                  {% if tx.transaction_type == 'purchase' %}
+                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">🛒 Purchase</span>
+                  {% elif tx.transaction_type == 'earn' %}
+                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">✅ Earned</span>
+                  {% elif tx.transaction_type == 'penalty' %}
+                    <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-bold">⚠️ Penalty</span>
+                  {% elif tx.transaction_type == 'bonus' %}
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">🎁 Bonus</span>
+                  {% else %}
+                    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-bold">{{ tx.transaction_type }}</span>
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4 text-gray-700">
+                  {% if tx.item %}
+                    <strong>{{ tx.item.name }}</strong>
+                  {% else %}
+                    {{ tx.note or 'Transaction' }}
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4 text-right font-bold">
+                  {% if tx.transaction_type == 'purchase' or tx.transaction_type == 'penalty' %}
+                    <span class="text-red-600">-{{ tx.amount }} ₑ₵</span>
+                  {% else %}
+                    <span class="text-green-600">+{{ tx.amount }} ₑ₵</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="bg-gray-50 px-6 py-4 border-t grid grid-cols-1 md:grid-cols-3 gap-4">
+          {% set total_earned = transactions | selectattr('transaction_type', 'equalto', 'earn') | map(attribute='amount') | sum %}
+          {% set total_spent = transactions | selectattr('transaction_type', 'equalto', 'purchase') | map(attribute='amount') | sum %}
+          {% set total_penalties = transactions | selectattr('transaction_type', 'equalto', 'penalty') | map(attribute='amount') | sum %}
+          
+          <div class="text-center">
+            <p class="text-gray-600 text-sm">Total Earned</p>
+            <p class="text-2xl font-bold text-green-600">+{{ total_earned }} ₑ₵</p>
+          </div>
+          <div class="text-center">
+            <p class="text-gray-600 text-sm">Total Spent</p>
+            <p class="text-2xl font-bold text-red-600">-{{ total_spent }} ₑ₵</p>
+          </div>
+          <div class="text-center">
+            <p class="text-gray-600 text-sm">Penalties</p>
+            <p class="text-2xl font-bold text-orange-600">-{{ total_penalties }} ₑ₵</p>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="bg-white rounded-xl shadow-lg p-12 text-center">
+        <p class="text-5xl mb-4">📭</p>
+        <p class="text-xl text-gray-700 font-semibold mb-2">No transactions yet</p>
+        <p class="text-gray-500 mb-6">Start earning EcoCoins by completing cleanups and reporting issues!</p>
+        <a href="{{ url_for('green_store') }}" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+          Visit Green Store
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Tips Section -->
+    <div class="mt-8 bg-blue-50 border-l-4 border-blue-500 p-6 rounded-lg">
+      <h3 class="font-bold text-blue-900 mb-2">💡 Tips for Earning More EcoCoins</h3>
+      <ul class="text-blue-900 space-y-2 text-sm">
+        <li>✓ Complete cleanup requests to earn points</li>
+        <li>✓ Submit cleanup reports with photos for verification</li>
+        <li>✓ Maintain a good rating to avoid penalties</li>
+        <li>✓ Participate in bonus events for extra rewards</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

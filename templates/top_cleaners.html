@@ -1,130 +1,252 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>🌿 Top Cleaners Leaderboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-{% block title %}Top Cleaners{% endblock %}
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
 
-{% block content %}
-<div class="container">
-    <h1>Top Cleaners</h1>
-    
-    <div class="row mt-4">
-        {% for cleaner in cleaners[:3] %}
-            <div class="col-md-4">
-                <div class="card text-center {{ 'border-warning' if loop.index == 1 else '' }}">
-                    <div class="card-body">
-                        <div class="display-1 mb-3">
-                            {% if loop.index == 1 %}🏆{% elif loop.index == 2 %}🥈{% else %}🥉{% endif %}
-                        </div>
-                        <h3 class="card-title">{{ cleaner.username }}</h3>
-                        <p class="card-text">
-                            <span class="badge bg-primary">{{ cleaner.points }} points</span>
-                        </p>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                {{ cleaner.cleanups_submitted|length }} cleanups completed
-                            </small>
-                        </p>
-                    </div>
-                </div>
+    body {
+      background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+      min-height: 100vh;
+    }
+
+    .card-glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .medal-gold { animation: bounce 2s infinite; }
+    .medal-silver { animation: bounce 2s infinite 0.2s; }
+    .medal-bronze { animation: bounce 2s infinite 0.4s; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .fade-up {
+      animation: fadeUp 0.8s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-weight: 700;
+      color: white;
+    }
+
+    .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); }
+    .rank-3 { background: linear-gradient(135deg, #d2691e, #cd853f); }
+
+    .hover-lift {
+      transition: all 0.3s ease;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(16, 185, 129, 0.3);
+    }
+
+    .pulse-glow {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-emerald-700 to-green-600 text-white shadow-lg">
+    <div class="max-w-6xl mx-auto px-6 py-12 flex justify-between items-start">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-2">🏆 Top Cleaners Leaderboard</h1>
+        <p class="text-emerald-100">Celebrating our community's environmental champions</p>
+      </div>
+      <a href="{% if current_user.role == 'cleaner' %}{{ url_for('cleaner_dashboard') }}{% else %}{{ url_for('user_dashboard') }}{% endif %}" class="text-white font-semibold hover:text-emerald-100 transition">← Back to Dashboard</a>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-12">
+    <!-- Top 3 Medal Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      {% for cleaner in cleaners[:3] %}
+      <div class="fade-up card-glass rounded-2xl shadow-xl hover-lift overflow-hidden" style="animation-delay: {{ loop.index0 * 0.2 }}s">
+        <div class="p-8 text-center">
+          <div class="text-6xl mb-4 {% if loop.index == 1 %}medal-gold{% elif loop.index == 2 %}medal-silver{% else %}medal-bronze{% endif %}">
+            {% if loop.index == 1 %}🏆{% elif loop.index == 2 %}🥈{% else %}🥉{% endif %}
+          </div>
+          <div class="rank-badge {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% else %}rank-3{% endif %} mb-4 mx-auto">
+            #{{ loop.index }}
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ cleaner.username }}</h3>
+          <div class="flex justify-center gap-4 mb-4">
+            <div class="text-center">
+              <p class="text-3xl font-bold text-emerald-600">{{ cleaner.points }}</p>
+              <p class="text-sm text-gray-600">ₑ₵</p>
             </div>
-        {% endfor %}
+            <div class="text-center">
+              <p class="text-3xl font-bold text-emerald-600">{{ cleaner.cleanups_submitted|length }}</p>
+              <p class="text-sm text-gray-600">Cleanups</p>
+            </div>
+          </div>
+          <div class="inline-block bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full text-sm font-semibold">
+            ⭐ Top Performer
+          </div>
+        </div>
+      </div>
+      {% endfor %}
     </div>
 
-    <!-- Full Leaderboard -->
-    <div class="card mt-5">
-        <div class="card-header">
-            <h3>Full Leaderboard</h3>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Cleaner</th>
-                            <th>Points</th>
-                            <th>Cleanups</th>
-                            <th>Latest Activity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cleaner in cleaners %}
-                            <tr class="{{ 'table-warning' if loop.index == 1 else '' }}">
-                                <td>{{ loop.index }}</td>
-                                <td>
-                                    {{ cleaner.username }}
-                                    {% if loop.index <= 3 %}
-                                        {{ ['🏆', '🥈', '🥉'][loop.index0] }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ cleaner.points }}</td>
-                                <td>{{ cleaner.cleanups_submitted|length }}</td>
-                                <td>
-                                    {% set latest = cleaner.cleanups_submitted|sort(attribute='created_at')|last %}
-                                    {% if latest %}
-                                        {{ latest.created_at.strftime('%Y-%m-%d') }}
-                                    {% else %}
-                                        No activity
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Full Leaderboard Section -->
+    <div class="fade-up card-glass rounded-2xl shadow-xl overflow-hidden mb-12" style="animation-delay: 0.6s">
+      <div class="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-8 py-6">
+        <h2 class="text-2xl font-bold">📊 Full Rankings</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-emerald-50 border-b-2 border-emerald-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-emerald-900">Rank</th>
+              <th class="px-6 py-4 text-left text-sm font-semibold text-emerald-900">Cleaner</th>
+              <th class="px-6 py-4 text-center text-sm font-semibold text-emerald-900">EcoCoins</th>
+              <th class="px-6 py-4 text-center text-sm font-semibold text-emerald-900">Cleanups</th>
+              <th class="px-6 py-4 text-center text-sm font-semibold text-emerald-900">Latest Activity</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-emerald-100">
+            {% for cleaner in cleaners %}
+            <tr class="hover:bg-emerald-50 transition {% if loop.index <= 3 %}bg-emerald-50 font-semibold{% endif %}">
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="rank-badge {% if loop.index == 1 %}rank-1{% elif loop.index == 2 %}rank-2{% elif loop.index == 3 %}rank-3{% else %}bg-gray-300{% endif %}">
+                    {{ loop.index }}
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-2">
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center text-white font-bold">
+                    {{ cleaner.username[0].upper() }}
+                  </div>
+                  <span>{{ cleaner.username }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <span class="inline-block bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-sm font-semibold">
+                  {{ cleaner.points }} ₑ₵
+                </span>
+              </td>
+              <td class="px-6 py-4 text-center">
+                <span class="font-bold text-emerald-700">{{ cleaner.cleanups_submitted|length }}</span>
+              </td>
+              <td class="px-6 py-4 text-center text-gray-600 text-sm">
+                {% set latest = cleaner.cleanups_submitted|sort(attribute='created_at')|last %}
+                {% if latest %}
+                  {{ latest.created_at.strftime('%b %d, %Y') }}
+                {% else %}
+                  <span class="text-gray-400">No activity</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Monthly Awards -->
-    <div class="card mt-5 mb-5">
-        <div class="card-header">
-            <h3>Monthly Awards</h3>
+    <div class="fade-up" style="animation-delay: 0.8s">
+      <h2 class="text-2xl font-bold text-emerald-900 mb-6">🎯 Monthly Awards</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <!-- Most Cleanups -->
+        <div class="card-glass rounded-2xl shadow-xl hover-lift overflow-hidden">
+          <div class="bg-gradient-to-br from-blue-400 to-blue-600 text-white px-6 py-4">
+            <p class="text-sm font-semibold">Most Cleanups</p>
+          </div>
+          <div class="p-6 text-center">
+            <p class="text-5xl mb-4">🎯</p>
+            {% if monthly_top_cleaner %}
+              <h4 class="text-xl font-bold text-gray-900 mb-2">{{ monthly_top_cleaner.username }}</h4>
+              <p class="text-3xl font-bold text-blue-600">{{ monthly_top_cleaner.cleanups_submitted|length }}</p>
+              <p class="text-sm text-gray-600 mt-2">cleanups this month</p>
+            {% else %}
+              <p class="text-gray-500">No data available</p>
+            {% endif %}
+          </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Most Cleanups</h5>
-                            <p class="display-4">🎯</p>
-                            <h4>{{ monthly_top_cleaner.username if monthly_top_cleaner else 'N/A' }}</h4>
-                            <p>{{ monthly_top_cleaner.monthly_cleanups if monthly_top_cleaner else 0 }} cleanups</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Most Improved</h5>
-                            <p class="display-4">📈</p>
-                            <h4>{{ most_improved.username if most_improved else 'N/A' }}</h4>
-                            <p>+{{ most_improved.improvement if most_improved else 0 }} points</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Perfect Score</h5>
-                            <p class="display-4">⭐</p>
-                            <h4>{{ perfect_score.username if perfect_score else 'N/A' }}</h4>
-                            <p>All cleanups verified</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
 
-{% block extra_js %}
-<script>
-    // Add any JavaScript for the leaderboard here
-    document.addEventListener('DOMContentLoaded', function() {
-        // Auto-refresh the page every 5 minutes
-        setTimeout(function() {
-            location.reload();
-        }, 300000);
-    });
-</script>
-{% endblock %}
+        <!-- Most Improved -->
+        <div class="card-glass rounded-2xl shadow-xl hover-lift overflow-hidden">
+          <div class="bg-gradient-to-br from-purple-400 to-purple-600 text-white px-6 py-4">
+            <p class="text-sm font-semibold">Most Improved</p>
+          </div>
+          <div class="p-6 text-center">
+            <p class="text-5xl mb-4">📈</p>
+            {% if most_improved %}
+              <h4 class="text-xl font-bold text-gray-900 mb-2">{{ most_improved.username }}</h4>
+              <p class="text-3xl font-bold text-purple-600">+{{ most_improved.improvement if most_improved else 0 }}</p>
+              <p class="text-sm text-gray-600 mt-2">points gained</p>
+            {% else %}
+              <p class="text-gray-500">No data available</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Perfect Score -->
+        <div class="card-glass rounded-2xl shadow-xl hover-lift overflow-hidden">
+          <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 text-white px-6 py-4">
+            <p class="text-sm font-semibold">Perfect Score</p>
+          </div>
+          <div class="p-6 text-center">
+            <p class="text-5xl mb-4 pulse-glow">⭐</p>
+            {% if perfect_score %}
+              <h4 class="text-xl font-bold text-gray-900 mb-2">{{ perfect_score.username }}</h4>
+              <p class="text-sm text-gray-600">All cleanups verified</p>
+            {% else %}
+              <p class="text-gray-500">No data available</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Message -->
+    <div class="fade-up text-center py-8" style="animation-delay: 1.0s">
+      <p class="text-gray-600">
+        🌿 <span class="font-semibold">Every cleanup counts!</span> Keep contributing to make our community cleaner and greener.
+      </p>
+      <p class="text-sm text-gray-500 mt-2">Data refreshes automatically every 5 minutes</p>
+    </div>
+  </div>
+
+  <script>
+    // Auto-refresh every 5 minutes
+    setTimeout(function() {
+      location.reload();
+    }, 300000);
+  </script>
+</body>
+</html>
