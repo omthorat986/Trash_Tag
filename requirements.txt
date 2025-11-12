@@ -1,14 +1,35 @@
-Flask
-Flask-SocketIO
-eventlet
-Flask-Login
-Flask-WTF
-Flask-Migrate
-Flask-Limiter
-Flask-SQLAlchemy
-Werkzeug
-Pillow
-gunicorn
-wtforms
-openai
-google-genai
+# --- Core Framework ---
+Flask==3.0.3
+Flask-Login==0.6.3
+Flask-WTF==1.2.1
+Flask-Migrate==4.0.7
+Flask-SQLAlchemy==3.1.1
+Flask-Limiter==3.8.0
+Werkzeug==3.0.3
+WTForms==3.1.2
+
+# --- Real-Time Communication ---
+Flask-SocketIO==5.3.6
+eventlet==0.36.1
+python-engineio==4.9.0
+python-socketio==5.11.3
+
+# --- Image Handling ---
+Pillow==10.4.0
+
+# --- AI Integrations ---
+openai==1.52.2
+google-genai==0.4.1
+
+# --- Security & Utilities ---
+itsdangerous==2.2.0
+email-validator==2.1.1
+python-dotenv==1.0.1
+
+# --- Server / Deployment ---
+gunicorn==23.0.0
+gevent==24.2.1
+
+# --- Optional (Recommended for Debugging & Quality) ---
+blinker==1.8.3
+requests==2.32.3
